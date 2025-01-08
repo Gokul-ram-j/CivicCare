@@ -9,9 +9,9 @@ import {
   Image,
 } from "react-native";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import {auth} from "./auth/firebase";
+import {auth} from "./firebase";
 
-const logoImg = require("../assets/logo.png");
+const logoImg = require("../../assets/logo.png");
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");

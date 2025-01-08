@@ -3,14 +3,16 @@ import {  View, Text } from "react-native";
 // firebase
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "./auth/firebase";
+import { firestore } from "./firebase";
 // style
 import { StyleSheet } from "react-native";
 // user component
 import { useState } from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
 
 
-
+const Stack = createNativeStackNavigator();
 
 export default function HomeScreen() { 
   

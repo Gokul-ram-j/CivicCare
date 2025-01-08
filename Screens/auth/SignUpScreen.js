@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Text, TextInput, View, StyleSheet, Image } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, firestore as db } from "./auth/firebase";
+import { auth, firestore as db } from "./firebase";
 import { doc, setDoc } from "firebase/firestore";
 
-const logoImg = require("../assets/logo.png");
+const logoImg = require("../../assets/logo.png");
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");

@@ -10,11 +10,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 // Screen imports
-import SignUpScreen from "./Screens/SignUpScreen";
-import LoginScreen from "./Screens/LoginScreen";
-import HomeScreen from "./Screens/HomeScreen";
+import SignUpScreen from "./Screens/auth/SignUpScreen";
+import LoginScreen from "./Screens/auth/LoginScreen";
+import HomeScreen from "./Screens/auth/HomeScreen";
 import UserProfile from "./Screens/UserProfile";
-import CommunityForum from "./Screens/CommunityForum";
+import CommunityForum from "./Screens/communityForum/CommunityForum";
 import Application from "./Screens/applicationScreens/Application";
 import OnboardScreen from "./Screens/OnboardingScreen/OnboardScreen";
 // Firebase imports
