@@ -1,9 +1,26 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { Text, View,Button } from 'react-native'
 
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
-
+const Comp1=()=>{
+  const navigation=useNavigation()
+  const handlePress=()=>{
+    navigation.navigate("comp2")
+  }
+  return (
+    <View style={{flex:1}}>
+      <Text>hello from comp 1</Text>
+      <Button title='click me' onPress={handlePress}/>
+    </View>
+  )
+}
+const Comp2=()=>{
+  return (
+    <View style={{flex:1}}>
+      <Text>hello from comp 2</Text>
+    </View>
+  )
+}
 
 
 const Stack=createNativeStackNavigator()
@@ -11,12 +28,11 @@ const Stack=createNativeStackNavigator()
 export default function Application() {
   
     return (
-      // <NavigationContainer>
-      //   <Stack.Screen/>
-      // </NavigationContainer>
-      <View>
-        <Text>Application Screen</Text>
-      </View>
+      <Stack.Navigator>
+        <Stack.Screen name='comp1' component={Comp1}/>
+        <Stack.Screen name='comp2' component={Comp2}/>
+      </Stack.Navigator>
+     
     )
   
 }

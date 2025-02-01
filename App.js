@@ -13,7 +13,7 @@ import Feather from "@expo/vector-icons/Feather";
 import SignUpScreen from "./Screens/auth/SignUpScreen";
 import LoginScreen from "./Screens/auth/LoginScreen";
 import HomeScreen from "./Screens/auth/HomeScreen";
-import UserProfile from "./Screens/UserProfile";
+import UserProfileStack from "./Screens/userProfile/UserProfileStack";
 import CommunityForum from "./Screens/communityForum/CommunityForum";
 import Application from "./Screens/applicationScreens/Application";
 import OnboardScreen from "./Screens/OnboardingScreen/OnboardScreen";
@@ -88,7 +88,7 @@ export default function App() {
       />
       <Tab.Screen
         name="UserProfile"
-        component={UserProfile}
+        component={UserProfileStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />

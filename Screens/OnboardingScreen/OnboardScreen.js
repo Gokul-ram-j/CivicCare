@@ -19,7 +19,9 @@ export default function OnboardScreen({ navigation }) {
   const slidesRef = useRef(null);
   const { width } = useWindowDimensions();
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    setCurrentIndex(viewableItems[0].index);
+    if (viewableItems.length > 0 && viewableItems[0]?.index !== undefined) {
+      setCurrentIndex(viewableItems[0].index);
+    }
   }).current;
 
   const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;

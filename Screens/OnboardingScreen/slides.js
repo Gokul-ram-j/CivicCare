@@ -3,7 +3,7 @@ const slides=[
         id:1,
         title:'Better Together',
         desc:'Share thoughts, raise concerns, and enhance our community.',
-        img:require('../../assets/announcementImg.png'),
+        img:require('../../assets/communityImg.png'),
     },
     {
         id:2,
