@@ -14,12 +14,12 @@ import SignUpScreen from "./Screens/auth/SignUpScreen";
 import LoginScreen from "./Screens/auth/LoginScreen";
 import HomeScreen from "./Screens/auth/HomeScreen";
 import UserProfileStack from "./Screens/userProfile/UserProfileStack";
-import CommunityForum from "./Screens/communityForum/CommunityForum";
-import Application from "./Screens/applicationScreens/Application";
+import ApplicationStack from "./Screens/applicationScreens/ApplicationStack";
 import OnboardScreen from "./Screens/OnboardingScreen/OnboardScreen";
 // Firebase imports
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./Screens/auth/firebase";
+import CommunityStack from "./Screens/communityForum/CommunityStack";
 
 // Create navigators
 const Stack = createNativeStackNavigator();
@@ -50,7 +50,7 @@ export default function App() {
 
   // Tab navigator for the main app flow
   const AppTabs = () => (
-    <Tab.Navigator >
+    <Tab.Navigator initialRouteName="Home">
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -62,8 +62,8 @@ export default function App() {
         }}
       />
       <Tab.Screen
-        name="Applications"
-        component={Application}
+        name="ApplicationStack"
+        component={ApplicationStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
@@ -76,8 +76,8 @@ export default function App() {
         }}
       />
       <Tab.Screen
-        name="CommunityForum"
-        component={CommunityForum}
+        name="CommunityStack"
+        component={CommunityStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="group" size={size} color={color} />

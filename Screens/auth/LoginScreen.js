@@ -9,7 +9,8 @@ import {
   Image,
 } from "react-native";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import {auth} from "./firebase";
+import { auth } from "./firebase";
+import Loader from "../loadingScreen/Loader";
 
 const logoImg = require("../../assets/logo.png");
 
@@ -21,7 +22,7 @@ export default function LoginScreen({ navigation }) {
   const checkIfLoggedIn = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigation.navigate("Home");
+        console.log("successfully logged in");
       }
     });
   };
@@ -35,22 +36,25 @@ export default function LoginScreen({ navigation }) {
     setIsLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        setIsLoading(false);
         const user = userCredential.user;
-        navigation.navigate("Home", { email: user.email });
       })
       .catch((error) => {
         setError(error.message);
       });
-    setIsLoading(false);
   };
 
   const goToRegister = () => {
     navigation.navigate("SignUp");
   };
 
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {isLoading?<ActivityIndicator size="large" />: <>
+      {isLoading ? (
+        <Loader/>
+      ) : (
+        <>
           <Image source={logoImg} style={{ width: 300, height: 100 }} />
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
             Welcome back to our platform!
@@ -77,7 +81,8 @@ export default function LoginScreen({ navigation }) {
             Create an account?{" "}
             <Text style={{ color: "rgb(0, 123, 255)" }}>Register here</Text>
           </Text>
-        </>}
+        </>
+      )}
     </View>
   );
 }

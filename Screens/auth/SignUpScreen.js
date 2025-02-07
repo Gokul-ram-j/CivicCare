@@ -28,7 +28,6 @@ export default function SignUpScreen({ navigation }) {
       .then((userCredential) => {
         const user = userCredential.user;
         createUserDocument(user.email,{name:'guest'});
-        navigation.navigate('OnboardingScreen')
       })
       .catch((error) => {
         setError(error.message);

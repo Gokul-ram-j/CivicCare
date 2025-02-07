@@ -44,11 +44,9 @@ export function ProfileImgContainer() {
     unsubscribe();
   });
 
-
   // getting userProfile image src
   useEffect(() => {
     const fetchUserDetails = async () => {
-      
       if (!userEmail) {
         console.error("User email is required!");
         return;
@@ -59,7 +57,7 @@ export function ProfileImgContainer() {
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setImageUri( userSnap.data().userProfile); // ✅
+          setImageUri(userSnap.data().userProfile); // ✅
         } else {
           console.log("No such document!");
         }
@@ -67,8 +65,9 @@ export function ProfileImgContainer() {
         console.error("Error fetching user data:", error);
       }
     };
-
-    fetchUserDetails();
+    if (userEmail) {
+      fetchUserDetails();
+    }
   }, [userEmail]);
 
   useEffect(() => {
