@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet,ScrollView } from "react-native";
 
 export default function UserDetailContainer({ details }) {
-  console.log("from udc------------>", details);
+  console.log("from udc------------>");
   return (
     <View style={styles.container}>
       <View style={styles.contextWrapper}>

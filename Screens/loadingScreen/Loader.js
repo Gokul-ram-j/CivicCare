@@ -13,11 +13,15 @@ const Loader = () => {
       <Text
         style={{
           marginTop: 10,
-          fontSize: 16,
+          fontSize: 15,
           fontWeight: "bold",
+          textAlign:'center',
+          width:'90%',
+          marginHorizontal:'auto',
+          
         }}
       >
-        Hold tight! We're logging you in... 🚀
+       🌍 "Loading... Making sure you have the best experience!"
       </Text>
     </View>
   );

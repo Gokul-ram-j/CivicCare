@@ -7,14 +7,13 @@ import {
   TextInput,
   FlatList,
   Image,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import {
   arrayUnion,
   collection,
   doc,
-  getDocs,
+  onSnapshot,
   setDoc,
 } from "firebase/firestore";
 import { auth, firestore } from "../auth/firebase";
@@ -88,22 +87,22 @@ export default function CommunityList() {
 
   // Fetching community details
   useEffect(() => {
-    const fetchCommunityDocs = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(firestore, "community"));
+    const unsubscribe = onSnapshot(
+      collection(firestore, "community"),
+      (querySnapshot) => {
         const docs = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        // console.log(docs);
         setCommunityData(docs);
         setFilteredData(docs);
-      } catch (error) {
+      },
+      (error) => {
         console.error("Error fetching community data:", error);
       }
-    };
+    );
 
-    fetchCommunityDocs();
+    return () => unsubscribe(); // Cleanup function to stop listening when the component unmounts
   }, []);
 
   // List Item Component
@@ -124,14 +123,14 @@ export default function CommunityList() {
               style={listItemStyle.button}
               onPress={() => navigation.navigate("CommunityDetails", { item })}
             >
-              <Octicons color='white' name="eye" size={24} />
+              <Octicons color="white" name="eye" size={24} />
               <Text style={listItemStyle.buttonText}>View Info</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={listItemStyle.button}
               onPress={() => handleJoinCommunity(item.id)}
             >
-              <FontAwesome6 color='white' name="people-group" size={24} />
+              <FontAwesome6 color="white" name="people-group" size={24} />
               <Text style={listItemStyle.buttonText}>Join</Text>
             </TouchableOpacity>
           </View>
@@ -191,13 +190,13 @@ export default function CommunityList() {
       borderRadius: 5,
       alignItems: "center",
       justifyContent: "center",
-      flexDirection:'row',
+      flexDirection: "row",
     },
     buttonText: {
       color: "#fff", // Match the default button text color
       fontSize: 16,
       fontWeight: "bold",
-      marginLeft:2,
+      marginLeft: 2,
     },
   });
 
