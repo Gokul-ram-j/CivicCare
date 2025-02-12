@@ -36,15 +36,58 @@ const ApplicationForm = ({ navigation, route }) => {
 
   // Function to pick an image
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All, // Allows both images & files
-      allowsEditing: true,
-      quality: 1,
-    });
+    Alert.alert(
+      "Upload Image",
+      "Choose an option:",
+      [
+        {
+          text: "📷 Take a Photo",
+          onPress: async () => {
+            const cameraPermission =
+              await ImagePicker.requestCameraPermissionsAsync();
+            if (!cameraPermission.granted) {
+              alert("Camera permission is required!");
+              return;
+            }
 
-    if (!result.canceled && result.assets.length > 0) {
-      setAttachments([...attachments, result.assets[0].uri]); // Store URI
-    }
+            let result = await ImagePicker.launchCameraAsync({
+              allowsEditing: true,
+              quality: 1,
+            });
+
+            if (!result.canceled && result.assets.length > 0) {
+              setAttachments([...attachments, result.assets[0].uri]);
+            }
+          },
+        },
+        {
+          text: "📁 Choose from Gallery",
+          onPress: async () => {
+            const mediaPermission =
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!mediaPermission.granted) {
+              alert("Gallery permission is required!");
+              return;
+            }
+
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              quality: 1,
+            });
+
+            if (!result.canceled && result.assets.length > 0) {
+              setAttachments([...attachments, result.assets[0].uri]);
+            }
+          },
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   // Function to handle form validation
@@ -88,10 +131,11 @@ const ApplicationForm = ({ navigation, route }) => {
       desc,
       category,
       attachments,
-      sender: userInfo.name ? userInfo.name : "Guest", // Getting sender from global state
+      sender: userInfo.userData.name || "Guest",
       date: currentDate,
       time: currentTime,
     };
+    console.log(newApplication);
     setLoading(true);
     await uploadApplication(newApplication, userInfo.community).then(() => {
       setLoading(false);
@@ -103,7 +147,7 @@ const ApplicationForm = ({ navigation, route }) => {
 
   return (
     <>
-      {loading && <Loader/>}
+      {loading && <Loader />}
       {!loading && (
         <SafeAreaView>
           <KeyboardAvoidingView>

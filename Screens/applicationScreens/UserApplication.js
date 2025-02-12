@@ -29,10 +29,10 @@ export function UserApplication({ navigation }) {
           (docSnap) => {
             if (docSnap.exists()) {
               setUserInfo({ ...docSnap.data(), userEmail: user.email });
-              console.log(
-                "Real-time update from userApplication:",
-                docSnap.data()
-              );
+              // console.log(
+              //   "Real-time update from userApplication:",
+              //   docSnap.data()
+              // );
             } else {
               console.log("No such document!");
               setUserInfo({});
@@ -63,7 +63,7 @@ export function UserApplication({ navigation }) {
 
           if (docSnap.exists()) {
             setApplications(docSnap.data().application); // Store all details in `applications`
-            console.log("Community details fetched:", docSnap.data());
+            // console.log("Community details fetched:", docSnap.data());
           } else {
             console.warn("No such community document!");
           }
@@ -200,7 +200,7 @@ const renderItem = ({ item }) => (
   <View style={itemStyles.card}>
     {/* Left Section - Category Image */}
     <View style={itemStyles.imageContainer}>
-      <Ionicons name="folder-outline" size={50} color="#007AFF" />
+      <Image style={{width:50,height:50 }} source={categoryImages[item.category]} />
     </View>
 
     {/* Right Section - Details */}
@@ -283,4 +283,18 @@ const itemStyles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+const categoryImages = {
+  transportation: require("../../assets/transportation.png"),
+  sanitation: require("../../assets/sanitation.png"),
+  waste_management: require("../../assets/waste_management.png"),
+  water_supply: require("../../assets/water_supply.png"),
+  energy_electricity: require("../../assets/energy_electricity.png"),
+  housing: require("../../assets/housing.png"),
+  health_safety: require("../../assets/health_safety.png"),
+  environmental_pollution: require("../../assets/environmental_pollution.png"),
+};
+
+
+
 export default UserApplication;

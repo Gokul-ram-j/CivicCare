@@ -28,7 +28,7 @@ const UserDetails = () => {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setUserInfo({ ...docSnap.data(), userEmail: user.email });
-            console.log("from userdetails", docSnap.data());
+            // console.log("from userdetails", docSnap.data());
           } else {
             console.log("No such document!");
             setUserInfo({});

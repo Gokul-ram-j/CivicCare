@@ -5,7 +5,6 @@ import {
   TextInput,
   View,
   StyleSheet,
-  ActivityIndicator,
   Image,
 } from "react-native";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
@@ -41,6 +40,8 @@ export default function LoginScreen({ navigation }) {
       })
       .catch((error) => {
         setError(error.message);
+        setIsLoading(false);
+        console.log(error)
       });
   };
 
