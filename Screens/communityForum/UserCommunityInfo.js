@@ -9,9 +9,16 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../auth/firebase";
 import { useState, useEffect } from "react";
-import { doc, updateDoc, getDoc, arrayRemove } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  arrayRemove,
+  onSnapshot,
+} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
+import UserCommunityAnnouncements from "./UserCommunityAnnouncements";
 
 export function UserCommunityInfo() {
   // const navigation
@@ -52,27 +59,29 @@ export function UserCommunityInfo() {
   // fetching user community data
 
   useEffect(() => {
-    const fetchCommunityDetails = async () => {
-      if (userInfo?.community) {
-        try {
-          const communityRef = doc(firestore, "community", userInfo.community);
-          const communitySnap = await getDoc(communityRef);
+    if (!userInfo?.community) {
+      return;
+    }
 
-          if (communitySnap.exists()) {
-            setItem(communitySnap.data());
-          } else {
-            console.log("Community not found");
-          }
-        } catch (error) {
-          console.error("Error fetching community details:", error);
-        } finally {
-          setLoading(false);
+    const communityRef = doc(firestore, "community", userInfo.community);
+
+    // Real-time listener
+    const unsubscribe = onSnapshot(
+      communityRef,
+      (communitySnap) => {
+        if (communitySnap.exists()) {
+          setItem(communitySnap.data());
+        } else {
+          console.log("Community not found");
         }
-      } else {
-        setLoading(false); // No community, stop loading
+      },
+      (error) => {
+        console.error("Error fetching community details:", error);
       }
-    };
-    fetchCommunityDetails();
+    );
+
+    // Cleanup function to remove listener when component unmounts or userInfo.community changes
+    return () => unsubscribe();
   }, [userInfo.community]);
 
   // handling leaving community action
@@ -96,23 +105,128 @@ export function UserCommunityInfo() {
       console.error("Error leaving community:", error);
     }
   };
+
+  // announcement options
+  const announcementOptions = [
+    {
+      type: "Event and Meetups",
+      imgURI: require("../../assets/eventsIcon.png"),
+    },
+    {
+      type: "Emergency",
+      imgURI: require("../../assets/emerygencyIcon.png"),
+    },
+    {
+      type: "Construction and Road Works",
+      imgURI: require("../../assets/constructionIcon.png"),
+    },
+    {
+      type: "Accident",
+      imgURI: require("../../assets/accidentIcon.png"),
+    },
+    {
+      type: "Fund Raise and Donation",
+      imgURI: require("../../assets/fundRaiseIcon.png"),
+    },
+    {
+      type: "Achievements",
+      imgURI: require("../../assets/achievementIcon.png"),
+    },
+  ];
+
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {/* announcement btn */}
       <TouchableOpacity
-        onPress={() => console.log("pressed")}
+        onPress={() => setModalVisible(!modalVisible)}
         style={styles.announcementBtn}
       >
-        <Image
-          style={styles.announcementImg}
-          source={require("../../assets/announcement.png")}
-        />
+        {!modalVisible && (
+          <Image
+            style={styles.announcementImg}
+            source={require("../../assets/announcement.png")}
+          />
+        )}
+        {modalVisible && (
+          <Image
+            style={styles.announcementImg}
+            source={require("../../assets/closeBtn.png")}
+          />
+        )}
       </TouchableOpacity>
+      {/* Modal for Announcement Input */}
 
-      <View>
+      {modalVisible && (
+        <View
+          style={{
+            height: 400,
+            width: 60,
+            backgroundColor: "rgb(255, 255, 255)",
+            elevation: 2,
+            position: "absolute",
+            left: 18,
+            bottom: 80,
+            zIndex: 3,
+            borderRadius: 25,
+            paddingVertical: 10,
+            paddingHorizontal: 5,
+          }}
+        >
+          {announcementOptions.map((info, index) => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                  navigation.navigate("AnnouncementForm", { type: info.type,community:userInfo.community });
+                }}
+                key={index}
+                style={{ height: "17%", alignItems: "center" }}
+              >
+                <Image
+                  style={{
+                    width: "90%",
+                    height: "90%",
+                    resizeMode: "contain",
+                  }}
+                  source={info.imgURI}
+                />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
+
+      <View style={{ height: "15%", width: "100%" }}>
         <Text style={styles.greetText}>Welcome to </Text>
         <Text style={styles.head}>{userInfo.community}</Text>
         <Text style={styles.greetText}>Community</Text>
       </View>
+      {/* all announcement */}
+      <View style={{ height: "85%", width: "90%", marginHorizontal: "auto" }}>
+        {(!item.announcements || item?.announcements.length == 0) && (
+          <View
+            style={{
+              height: "80%",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Image
+              style={{ height: "60%", width: "60%" }}
+              source={require("../../assets/noAnnouncement.png")}
+            />
+            <Text style={{ fontWeight: "bold" }}>
+              No Announcement has been made Yet
+            </Text>
+          </View>
+        )}
+        {item.announcements && (
+          <UserCommunityAnnouncements announcements={item.announcements} />
+        )}
+      </View>
+      {/* settings btn */}
       <View style={styles.btnContainer}>
         <TouchableOpacity onPress={() => setShowOptions(!showOptions)}>
           <Image
@@ -120,7 +234,7 @@ export function UserCommunityInfo() {
             source={require("../../assets/settings.png")}
           />
         </TouchableOpacity>
-
+        {/* settings options */}
         {showOptions && (
           <View style={styles.optionsBox}>
             <TouchableOpacity
@@ -139,10 +253,9 @@ export function UserCommunityInfo() {
             {item && (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate(
-                    "CommunityDetails",
-                    {item,navigateBackTo:"UserCommunityInfo"}
-                  )
+                  navigation.navigate("CommunityDetails", {
+                    item,
+                  })
                 }
                 style={styles.optionButton}
               >
@@ -191,10 +304,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
+    zIndex: 5,
   },
   announcementImg: {
-    width: 50,
-    height: 50,
+    width: 35,
+    height: 35,
   },
 
   // settings style
@@ -241,25 +355,3 @@ const styles = StyleSheet.create({
 });
 
 export default UserCommunityInfo;
-
-{
-  /* <TouchableOpacity
-          onPress={handleLeaveCommunity}
-          style={{
-            backgroundColor: "#FF3B30", 
-            padding: 12,
-            borderRadius: 8,
-            flexDirection:'row',
-            justifyContent:'center',
-            alignItems:'center'
-          }}
-        >
-          <FontAwesome
-            name="sign-out"
-            size={15}
-            color="white"
-            style={{ marginRight: 8 ,marginTop:5}}
-          />
-          <Text style={{color:'white',fontSize:14,fontWeight:'bold'}}>Leave</Text>
-        </TouchableOpacity> */
-}

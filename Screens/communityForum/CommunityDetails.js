@@ -15,7 +15,7 @@ import MembersInfo from "./MembersInfo";
 import { Ionicons } from "@expo/vector-icons";
 export function CommunityDetails({ route }) {
   // community details
-  const { item,navigateBackTo } = route.params;
+  const { item } = route.params;
   // members email
   const membersEmail = item.members || [];
   // community member details
@@ -88,7 +88,7 @@ export function CommunityDetails({ route }) {
 
           <Button
             title="back"
-            onPress={() => navigation.navigate(navigateBackTo)}
+            onPress={() => navigation.goBack()}
           />
         </View>
       </ScrollView>

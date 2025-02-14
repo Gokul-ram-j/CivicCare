@@ -121,7 +121,7 @@ export default function CommunityList() {
           <View style={listItemStyle.buttonContainer}>
             <TouchableOpacity
               style={listItemStyle.button}
-              onPress={() => navigation.navigate("CommunityDetails", { item,navigateBackTo: "CommunityList" })}
+              onPress={() => navigation.navigate("CommunityDetails", { item })}
             >
               <Octicons color="white" name="eye" size={24} />
               <Text style={listItemStyle.buttonText}>View Info</Text>

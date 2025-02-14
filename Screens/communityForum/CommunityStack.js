@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import CommunityForum from "./CommunityForum";
 import CommunityDetails from "./CommunityDetails";
 import { UserCommunityInfo } from "./UserCommunityInfo";
+import AnnouncementForm from "./AnnouncementForm";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,11 @@ export default function CommunityStack() {
       <Stack.Screen
         name="CommunityDetails"
         component={CommunityDetails}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AnnouncementForm"
+        component={AnnouncementForm}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

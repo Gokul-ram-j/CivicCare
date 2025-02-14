@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  ScrollView,
 } from "react-native";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../auth/firebase";
@@ -56,23 +57,26 @@ export function UserApplication({ navigation }) {
 
   useEffect(() => {
     if (userInfo?.community) {
-      const fetchCommunityData = async () => {
-        try {
-          const docRef = doc(firestore, "community", userInfo.community);
-          const docSnap = await getDoc(docRef);
+      const docRef = doc(firestore, "community", userInfo.community);
 
+      // Listen for real-time updates
+      const unsubscribe = onSnapshot(
+        docRef,
+        (docSnap) => {
           if (docSnap.exists()) {
-            setApplications(docSnap.data().application); // Store all details in `applications`
-            // console.log("Community details fetched:", docSnap.data());
+            setApplications(docSnap.data().application); // Update state with new data
+            // console.log("Real-time community details:", docSnap.data());
           } else {
             console.warn("No such community document!");
           }
-        } catch (error) {
-          console.error("Error fetching community document:", error);
+        },
+        (error) => {
+          console.error("Error fetching real-time community document:", error);
         }
-      };
+      );
 
-      fetchCommunityData();
+      // Cleanup subscription when component unmounts
+      return () => unsubscribe();
     }
   }, [userInfo.community]);
   return (
@@ -200,7 +204,10 @@ const renderItem = ({ item }) => (
   <View style={itemStyles.card}>
     {/* Left Section - Category Image */}
     <View style={itemStyles.imageContainer}>
-      <Image style={{width:50,height:50 }} source={categoryImages[item.category]} />
+      <Image
+        style={{ width: 50, height: 50 }}
+        source={categoryImages[item.category]}
+      />
     </View>
 
     {/* Right Section - Details */}
@@ -294,7 +301,5 @@ const categoryImages = {
   health_safety: require("../../assets/health_safety.png"),
   environmental_pollution: require("../../assets/environmental_pollution.png"),
 };
-
-
 
 export default UserApplication;
