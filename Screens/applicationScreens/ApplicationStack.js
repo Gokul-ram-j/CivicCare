@@ -3,6 +3,7 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { Text, View,Button } from 'react-native'
 import UserApplication from './UserApplication';
 import ApplicationForm from './ApplicationForm';
+import AttachmentsImgs from '../communityForum/AttachmentsImgs';
 
 const Stack=createNativeStackNavigator()
 
@@ -12,6 +13,7 @@ export default function ApplicationStack() {
       <Stack.Navigator initialRouteName='UserApplication'>
         <Stack.Screen options={{headerShown:false}} name='UserApplication' component={UserApplication}/>
         <Stack.Screen options={{headerShown:false}} name='ApplicationForm' component={ApplicationForm}/>
+        <Stack.Screen options={{headerShown:false}} name='AttachmentsImgs' component={AttachmentsImgs}/>
       </Stack.Navigator>
      
     )

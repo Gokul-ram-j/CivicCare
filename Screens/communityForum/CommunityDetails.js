@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
-  Button,
+  TouchableOpacity,
   Image,
   SafeAreaView,
   ScrollView,
@@ -13,6 +13,7 @@ import {
 import { auth, firestore } from "../auth/firebase";
 import MembersInfo from "./MembersInfo";
 import { Ionicons } from "@expo/vector-icons";
+
 export function CommunityDetails({ route }) {
   // community details
   const { item } = route.params;
@@ -22,6 +23,7 @@ export function CommunityDetails({ route }) {
   const [membersInfo, setMembersInfo] = useState([]);
   // navigation
   const navigation = useNavigation();
+
   // fetching members details
   useEffect(() => {
     const fetchMembers = async () => {
@@ -32,7 +34,6 @@ export function CommunityDetails({ route }) {
           [...uniqueMembers].map(async (docId) => {
             const docRef = doc(firestore, "userDetails", docId);
             const docSnap = await getDoc(docRef);
-
             return docSnap.exists() ? { id: docId, ...docSnap.data() } : null;
           })
         );
@@ -45,51 +46,42 @@ export function CommunityDetails({ route }) {
     };
 
     fetchMembers();
-  }, []); // Fetch only once when mounted
+  }, [membersEmail]); // Ensuring it updates when members change
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <Text style={{ fontSize: 20, textAlign: "center",fontWeight:'bold' }}> {item.id}</Text>
-          <View
-            style={{
-              width: "100%",
-              padding: 10,
-              height: 200,
-              paddingVertical: 20,
-            }}
-          >
-            <Image
-              source={{ uri: item.profileImgURL }}
-              style={{
-                marginHorizontal: "auto",
-                width: "50%",
-                height: "100%",
-                borderRadius: 50,
-              }}
-            />
+          {/* Community Title */}
+          <Text style={styles.communityTitle}>{item.id}</Text>
+
+          {/* Community Profile Image */}
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: item.profileImgURL }} style={styles.image} />
           </View>
 
-          <View style={{ marginVertical: 20 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                marginHorizontal: "auto",
-                borderBottomWidth: 1,
-              }}
-            >
-              <Ionicons name="people-sharp" size={24} color="black" />
-              <Text style={{ marginLeft: 10, fontSize: 20 }}>Members</Text>
+          {/* Members Section */}
+          <View style={styles.membersSection}>
+            <View style={styles.membersHeader}>
+              <Ionicons name="people-sharp" size={24} color="#333" />
+              <Text style={styles.membersText}>Members</Text>
             </View>
 
-            {membersInfo && <MembersInfo memberDetail={membersInfo} />}
+            {membersInfo.length > 0 ? (
+              <MembersInfo memberDetail={membersInfo} />
+            ) : (
+              <Text style={styles.noMembersText}>No members yet.</Text>
+            )}
           </View>
 
-          <Button
-            title="back"
+          {/* Back Button */}
+          <TouchableOpacity
+            style={styles.backButton}
             onPress={() => navigation.goBack()}
-          />
+          >
+            <Ionicons name="arrow-back" size={20} color="#fff" />
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -97,10 +89,86 @@ export function CommunityDetails({ route }) {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+  },
+  scrollContainer: {
+    paddingBottom: 30,
+  },
   container: {
+    padding: 15,
+    alignItems: "center",
+  },
+  communityTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginVertical: 10,
+    color: "#333",
+  },
+  imageContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: "hidden",
+    backgroundColor: "#ddd",
+    marginVertical: 10,
+    elevation: 3, // Shadow for Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  image: {
     width: "100%",
     height: "100%",
-    padding: 5,
+  },
+  membersSection: {
+    width: "100%",
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    elevation: 3, // Shadow for Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  membersHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  membersText: {
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  noMembersText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginTop: 20,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "#fff",
+    marginLeft: 8,
+    fontWeight: "bold",
   },
 });
 

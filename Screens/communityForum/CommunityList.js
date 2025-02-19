@@ -107,31 +107,33 @@ export default function CommunityList() {
 
   // List Item Component
   const ListItem = ({ item }) => {
+    const navigation = useNavigation();
+
     return (
-      <View style={listItemStyle.itemBox}>
+      <View style={listItemStyles.itemBox}>
         <Image
           source={{ uri: item.profileImgURL }}
-          style={listItemStyle.profileImage}
+          style={listItemStyles.profileImage}
         />
-        <View style={listItemStyle.infoContainer}>
-          <Text style={listItemStyle.communityName}>{item.id}</Text>
-          <Text style={listItemStyle.members}>
+        <View style={listItemStyles.infoContainer}>
+          <Text style={listItemStyles.communityName}>{item.id}</Text>
+          <Text style={listItemStyles.members}>
             Members: {item.members.length}
           </Text>
-          <View style={listItemStyle.buttonContainer}>
+          <View style={listItemStyles.buttonContainer}>
             <TouchableOpacity
-              style={listItemStyle.button}
+              style={[listItemStyles.button, listItemStyles.viewButton]}
               onPress={() => navigation.navigate("CommunityDetails", { item })}
             >
-              <Octicons color="white" name="eye" size={24} />
-              <Text style={listItemStyle.buttonText}>View Info</Text>
+              <Octicons color="white" name="eye" size={20} />
+              <Text style={listItemStyles.buttonText}>View</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={listItemStyle.button}
+              style={[listItemStyles.button, listItemStyles.joinButton]}
               onPress={() => handleJoinCommunity(item.id)}
             >
-              <FontAwesome6 color="white" name="people-group" size={24} />
-              <Text style={listItemStyle.buttonText}>Join</Text>
+              <FontAwesome6 color="white" name="people-group" size={20} />
+              <Text style={listItemStyles.buttonText}>Join</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -139,67 +141,69 @@ export default function CommunityList() {
     );
   };
 
-  const listItemStyle = StyleSheet.create({
+  const listItemStyles = StyleSheet.create({
     itemBox: {
-      width: "90%",
       flexDirection: "row",
-      backgroundColor: "#f0f0f0",
       alignItems: "center",
-      marginVertical: 5,
-      padding: 15,
-      borderRadius: 5,
-      marginHorizontal: "auto",
-      borderWidth: 1, // Adds a border around the box
-      borderColor: "#ccc", // Defines the color of the border
-      shadowColor: "#000", // The shadow color (black)
-      shadowOffset: { width: 0, height: 2 }, // Defines the shadow's offset
-      shadowOpacity: 0.1, // The opacity of the shadow
-      shadowRadius: 5, // The blur radius of the shadow
-      elevation: 5,
-      borderBottomRightRadius: 25,
-      borderTopLeftRadius: 25,
+      backgroundColor: "#fff",
+      borderRadius: 12,
+      padding: 12,
+      marginVertical: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+      width:'90%',
+      marginHorizontal:'auto'
     },
     profileImage: {
-      width: "30%",
-      height: "100%",
-      borderRadius: 10,
-      marginRight: 10,
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      marginRight: 12,
     },
     infoContainer: {
-      width: "70%",
+      flex: 1,
+      justifyContent: "center",
     },
     communityName: {
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: "bold",
-      marginBottom: 5,
+      color: "#333",
     },
     members: {
       fontSize: 14,
-      marginBottom: 5,
+      color: "#666",
+      marginBottom: 6,
     },
     buttonContainer: {
-      flexDirection: "column",
+      flexDirection: "row",
       justifyContent: "space-between",
-      width: "90%",
-      gap: 2,
     },
     button: {
-      backgroundColor: "#007AFF", // Match the default button color
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 5,
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      flexDirection: "row",
+      paddingVertical: 6,
+      paddingHorizontal: 14,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal: 4,
+    },
+    viewButton: {
+      backgroundColor: "#3498db",
+    },
+    joinButton: {
+      backgroundColor: "#27ae60",
     },
     buttonText: {
-      color: "#fff", // Match the default button text color
-      fontSize: 16,
-      fontWeight: "bold",
-      marginLeft: 2,
+      color: "white",
+      fontSize: 14,
+      fontWeight: "600",
+      marginLeft: 6,
     },
   });
-
   //  suggesting community that match search word
   useEffect(() => {
     if (search) {

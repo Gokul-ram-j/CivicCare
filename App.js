@@ -12,7 +12,7 @@ import Feather from "@expo/vector-icons/Feather";
 // Screen imports
 import SignUpScreen from "./Screens/auth/SignUpScreen";
 import LoginScreen from "./Screens/auth/LoginScreen";
-import HomeScreen from "./Screens/auth/HomeScreen";
+import HomeScreen from "./Screens/Home/HomeScreen";
 import UserProfileStack from "./Screens/userProfile/UserProfileStack";
 import ApplicationStack from "./Screens/applicationScreens/ApplicationStack";
 import OnboardScreen from "./Screens/OnboardingScreen/OnboardScreen";

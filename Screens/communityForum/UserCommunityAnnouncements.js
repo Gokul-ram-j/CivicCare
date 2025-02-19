@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import { ScrollView } from "react-native";
+import { ImageBackground, ScrollView } from "react-native";
 import { View, Text, StyleSheet, SectionList, FlatList } from "react-native";
-
+import { Image } from "expo-image";
 // eventModalCard
 const EventCard = ({ event }) => {
   // styles
@@ -27,6 +27,7 @@ const EventCard = ({ event }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     type: {
       color: "#fff",
@@ -61,6 +62,16 @@ const EventCard = ({ event }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/confetti.gif")}
+      />
       <View style={styles.header}>
         <Text style={styles.type}>{event.type_of_celebration}</Text>
       </View>
@@ -107,6 +118,7 @@ const EmergencyCard = ({ emergency }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     title: {
       color: "#fff",
@@ -141,6 +153,17 @@ const EmergencyCard = ({ emergency }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/alarm.gif")}
+      />
+
       <View style={styles.header}>
         <Text style={styles.title}>🚑 Emergency Request</Text>
       </View>
@@ -193,6 +216,7 @@ const RoadConstructionCard = ({ construction }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     type: {
       color: "#fff",
@@ -227,6 +251,16 @@ const RoadConstructionCard = ({ construction }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/under-construction.gif")}
+      />
       <View style={styles.header}>
         <Text style={styles.type}>Road Block Alert 🚧</Text>
       </View>
@@ -277,6 +311,7 @@ const AccidentCard = ({ accident }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     type: {
       color: "#fff",
@@ -311,6 +346,16 @@ const AccidentCard = ({ accident }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/car-accident.gif")}
+      />
       <View style={styles.header}>
         <Text style={styles.type}>{accident.accident_type}</Text>
       </View>
@@ -365,6 +410,7 @@ const FundRaiseAndDonationCard = ({ donation }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     type: {
       color: "#fff",
@@ -399,6 +445,16 @@ const FundRaiseAndDonationCard = ({ donation }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/donate.gif")}
+      />
       <View style={styles.header}>
         <Text style={styles.type}>{donation.category}</Text>
       </View>
@@ -451,6 +507,7 @@ const AchievementCard = ({ achievement }) => {
       paddingHorizontal: 10,
       borderRadius: 5,
       alignSelf: "flex-start",
+      maxWidth: "80%",
     },
     type: {
       color: "#fff",
@@ -485,6 +542,16 @@ const AchievementCard = ({ achievement }) => {
 
   return (
     <View style={styles.card}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          position: "absolute",
+          top: "5%",
+          right: "5%",
+        }}
+        source={require("../../assets/trophy.gif")}
+      />
       <View style={styles.header}>
         <Text style={styles.type}>{achievement.event_type} Achievement</Text>
       </View>

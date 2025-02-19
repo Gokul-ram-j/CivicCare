@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import { Image, SafeAreaView, Text, View, StyleSheet,Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window"); // Get device width for full-width image

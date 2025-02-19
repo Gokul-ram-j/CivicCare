@@ -4,7 +4,8 @@ const Loader = () => {
   return (
     <View
       style={{
-        flex: 1,
+        height:'100%',
+        width:'90%',
         justifyContent: "center",
         alignItems: "center",
       }}

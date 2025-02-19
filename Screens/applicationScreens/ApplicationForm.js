@@ -125,25 +125,56 @@ const ApplicationForm = ({ navigation, route }) => {
   // Function to handle form submission
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
-    const newApplication = {
-      title,
-      desc,
-      category,
-      attachments,
-      sender: userInfo.userData.name || "Guest",
-      date: currentDate,
-      time: currentTime,
-    };
-    console.log(newApplication);
-    setLoading(true);
-    await uploadApplication(newApplication, userInfo.community).then(() => {
+  
+    try {
+      setLoading(true);
+      
+      // Function to upload a single attachment to Cloudinary
+      const uploadToCloudinary = async (fileUri) => {
+        const data = new FormData();
+        data.append("file", { uri: fileUri, type: "image/jpeg", name: "upload.jpg" });
+        data.append("upload_preset", "Application_Attachments"); // Replace with your Cloudinary upload preset
+        data.append("cloud_name", "dja1myfkv"); // Replace with your Cloudinary cloud name
+  
+        const response = await fetch("https://api.cloudinary.com/v1_1/dja1myfkv/image/upload", {
+          method: "POST",
+          body: data,
+        });
+        
+        const result = await response.json();
+        return result.secure_url; // Return uploaded file URL
+      };
+  
+      // Upload all attachments to Cloudinary
+      const uploadedAttachments = await Promise.all(
+        attachments.map((fileUri) => uploadToCloudinary(fileUri))
+      );
+  
+      const newApplication = {
+        title,
+        desc,
+        category,
+        attachments: uploadedAttachments, // Updated attachments with URLs
+        sender: userInfo.userData.name || "Guest",
+        date: currentDate,
+        time: currentTime,
+        status: "submitted",
+      };
+      
+      console.log(newApplication);
+      await uploadApplication(newApplication, userInfo.community);
+  
       setLoading(false);
       Alert.alert("Success", "Application submitted successfully!", [
         { text: "OK", onPress: () => navigation.navigate("UserApplication") },
       ]);
-    });
+    } catch (error) {
+      setLoading(false);
+      console.error("Error uploading application:", error);
+      Alert.alert("Error", "Failed to submit application. Please try again.");
+    }
   };
+  
 
   return (
     <>

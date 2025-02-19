@@ -16,63 +16,107 @@ import { firestore } from "../auth/firebase";
 export function ProfileImgContainer() {
   const [imageUri, setImageUri] = useState(null);
   const [userEmail, setUserEmail] = useState("");
+  const [cloudinaryPublicId, setCloudinaryPublicId] = useState(null);
   const auth = getAuth();
 
-  // updating userProfile
-  const updateUserProfile = async () => {
-    if (!userEmail || !imageUri) return;
+  const uploadImageToCloudinary = async (imageUri) => {
+    const data = new FormData();
+    data.append("file", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: "profile.jpg",
+    });
+    data.append("upload_preset", "Profile_Imgs");
+    data.append("cloud_name", "dja1myfkv");
 
     try {
-      const userRef = doc(firestore, "userDetails", userEmail);
-      await updateDoc(userRef, { userProfile: imageUri });
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dja1myfkv/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const result = await response.json();
+      return { url: result.secure_url, publicId: result.public_id };
+    } catch (error) {
+      console.error("Error uploading to Cloudinary:", error);
+      return null;
+    }
+  };
+  // function to delete old image
+  // const deleteImageFromCloudinary = async (publicId) => {
+  //   if (!publicId) return;
 
+  //   try {
+  //     await fetch(
+  //       `https://api.cloudinary.com/v1_1/dja1myfkv/image/destroy`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ public_id: publicId, api_key: "dja1myfkv" }),
+  //       }
+  //     );
+  //     console.log("Old image deleted successfully");
+  //   } catch (error) {
+  //     console.error("Error deleting old image:", error);
+  //   }
+  // };
+
+  const updateUserProfile = async (newImageUri) => {
+    if (!userEmail || !newImageUri) return;
+
+    try {
+
+      // for deleting old profile which is been upload in cloud
+      // if (cloudinaryPublicId) {
+      //   await deleteImageFromCloudinary(cloudinaryPublicId);
+      // }
+
+      const uploadResult = await uploadImageToCloudinary(newImageUri);
+      if (!uploadResult) return;
+
+      const userRef = doc(firestore, "userDetails", userEmail);
+      await updateDoc(userRef, {
+        userProfile: uploadResult.url,
+        cloudinaryPublicId: uploadResult.publicId,
+      });
+
+      setImageUri(uploadResult.url);
+      setCloudinaryPublicId(uploadResult.publicId);
       console.log("User profile updated successfully!");
     } catch (error) {
       console.error("Error updating user profile:", error);
     }
   };
 
-  // getting user Email
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUserEmail(user.email);
-    } else {
-      console.log("No user is logged in");
-    }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserEmail(user.email);
+      } else {
+        console.log("No user is logged in");
+      }
+      unsubscribe();
+    });
+  }, []);
 
-    // Unsubscribe after getting the user
-    unsubscribe();
-  });
-
-  // getting userProfile image src
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (!userEmail) {
-        console.error("User email is required!");
-        return;
-      }
-
+      if (!userEmail) return;
       try {
         const userRef = doc(firestore, "userDetails", userEmail);
         const userSnap = await getDoc(userRef);
-
         if (userSnap.exists()) {
-          setImageUri(userSnap.data().userProfile); // ✅
-        } else {
-          console.log("No such document!");
+          setImageUri(userSnap.data().userProfile);
+          setCloudinaryPublicId(userSnap.data().cloudinaryPublicId);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-    if (userEmail) {
-      fetchUserDetails();
-    }
+    fetchUserDetails();
   }, [userEmail]);
-
-  useEffect(() => {
-    updateUserProfile(imageUri);
-  }, [imageUri]);
 
   const handleImagePick = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -83,16 +127,15 @@ export function ProfileImgContainer() {
       );
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
-
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      updateUserProfile(result.assets[0].uri);
     }
   };
+
   return (
     <View style={styles.imageContainer}>
       <Image

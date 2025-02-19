@@ -5,6 +5,7 @@ import CommunityForum from "./CommunityForum";
 import CommunityDetails from "./CommunityDetails";
 import { UserCommunityInfo } from "./UserCommunityInfo";
 import AnnouncementForm from "./AnnouncementForm";
+import AttachmentsImgs from "./AttachmentsImgs";
 
 const Stack = createNativeStackNavigator();
 

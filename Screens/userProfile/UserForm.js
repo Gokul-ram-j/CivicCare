@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,8 +13,8 @@ import { useForm, Controller } from "react-hook-form";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import { useNavigation } from "@react-navigation/native";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { firestore, auth } from "../auth/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { firestore } from "../auth/firebase";
 
 const stateOptions = [
   { label: "Andhra Pradesh", value: "Andhra Pradesh" },
