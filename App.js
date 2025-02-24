@@ -102,7 +102,7 @@ export default function App() {
   // Stack navigator for onboarding + main app flow
   const MainStack = () => (
     <Stack.Navigator
-      initialRouteName="OnboardScreen"
+      initialRouteName="AppTabs"
     >
       <Stack.Screen options={{title:"Welcome Chief"}}  name="OnboardScreen" component={OnboardScreen}  />
       <Stack.Screen options={{title:'CivicCare'}} name="AppTabs" component={AppTabs} />

@@ -27,7 +27,7 @@ export default function SignUpScreen({ navigation }) {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        createUserDocument(user.email,{name:'guest'});
+        createUserDocument(user.email,{community:"",userData:{name:"guest",dob:"N/A",gender:"N/A",profession:"N/A",address:""}});
       })
       .catch((error) => {
         setError(error.message);

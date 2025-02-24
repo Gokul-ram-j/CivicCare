@@ -23,7 +23,8 @@ const { height, width } = Dimensions.get("window");
 // 🔹 Set notification handler for foreground notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => {
-    Vibration.vibrate(); // Add vibration when a notification is received in the foreground
+    Vibration.vibrate([1000, 500, 500,1000, 1000, 500,500,1000]); 
+
     return {
       shouldShowAlert: true,
       shouldPlaySound: true,
@@ -31,6 +32,7 @@ Notifications.setNotificationHandler({
     };
   },
 });
+
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -222,7 +224,7 @@ export default function HomeScreen() {
     const location = await getActualLocation();
     const messages = pushTokens.map((token) => ({
       to: token,
-      sound: "default",
+      sound: "../../assets/sos.mp3",  // Custom sound file
       title: "🚨 Emergency Alert 🚨",
       body: `${userData.userData.name} needs help immediately!`,
       data: {
@@ -232,7 +234,7 @@ export default function HomeScreen() {
         location: location,
       },
     }));
-
+    
     await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
       headers: {
