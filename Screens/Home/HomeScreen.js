@@ -253,7 +253,7 @@ export default function HomeScreen() {
       <Foundation name="alert" size={150} color="white" />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>Expo Push Notifications</Text>
+        <Text style={styles.title}>Emergency Push Notifications</Text>
         <Text style={styles.communityText}>
           {isMemberOfCommunity
             ? `Community: ${communityName}`
