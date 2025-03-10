@@ -290,7 +290,7 @@ export function UserApplication({ navigation }) {
           </Text>
         </View>
       )}
-      {!applications && (
+      {(!applications || applications.length==0) && (
         <View
           style={{
             height: "100%",
@@ -392,9 +392,9 @@ const styles = StyleSheet.create({
 // statusbar icons
 const StatusBarIcons = {
   submitted: require("../../assets/upload.png"), // Replace with actual paths
-  acknowledged: require("../../assets/acknowledge.png"),
+  acknowledged: require("../../assets/Acknowledge.png"),
   inProgress: require("../../assets/work-in-progress.png"),
-  resolved: require("../../assets/resolved.png"),
+  resolved: require("../../assets/Resolved.png"),
 };
 
 const categoryImages = {

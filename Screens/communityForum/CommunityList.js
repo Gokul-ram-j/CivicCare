@@ -238,7 +238,7 @@ export default function CommunityList() {
             </View>
 
             {/* community list */}
-            <View>
+            <View style={styles.listContainer}>
               <FlatList
                 data={filteredData}
                 keyExtractor={(item) => item.id}
@@ -264,6 +264,9 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     height: 50,
     margin: 10,
+  },
+  listContainer:{
+    height:'87%'
   },
   input: {
     flex: 1,
