@@ -124,6 +124,11 @@ export function UserApplication({ navigation }) {
         color: "#444",
         marginTop: 5,
       },
+      location: {
+        fontSize: 12,
+        fontWeight: "bold",
+        marginVertical:5,
+      },
       desc: {
         fontSize: 13,
         color: "#666",
@@ -206,6 +211,10 @@ export function UserApplication({ navigation }) {
             <Text style={itemStyles.sender}>{item.sender}</Text>
           </View>
           <Text style={itemStyles.title}>{item.title}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons name="location-sharp" size={12} color="black" />
+            <Text style={itemStyles.location}> {item.location}</Text>
+          </View>
           <Text style={itemStyles.desc}>{item.desc}</Text>
 
           {/* Bottom Section - Status, Attachment & Date */}
@@ -252,7 +261,11 @@ export function UserApplication({ navigation }) {
             {/* Attachment Button */}
             <TouchableOpacity
               style={itemStyles.attachmentBtn}
-              onPress={() => navigation.navigate('AttachmentsImgs',{uris:item.attachments})}
+              onPress={() =>
+                navigation.navigate("AttachmentsImgs", {
+                  uris: item.attachments,
+                })
+              }
             >
               <Text style={itemStyles.attachmentText}>
                 View Attachment ({item.attachments.length})
@@ -290,7 +303,7 @@ export function UserApplication({ navigation }) {
           </Text>
         </View>
       )}
-      {(!applications || applications.length==0) && (
+      {(!applications || applications.length == 0) && (
         <View
           style={{
             height: "100%",

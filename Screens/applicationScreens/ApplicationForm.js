@@ -17,10 +17,13 @@ import { Picker } from "@react-native-picker/picker";
 import { firestore } from "../auth/firebase";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import Loader from "../loadingScreen/Loader";
+import * as Location from "expo-location";
+import { ActivityIndicator } from "react-native";
 
 const ApplicationForm = ({ navigation, route }) => {
   // loading state
   const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
   // user data
   const { userInfo } = route.params;
 
@@ -28,6 +31,7 @@ const ApplicationForm = ({ navigation, route }) => {
   const [desc, setDesc] = useState("");
   const [category, setCategory] = useState("Select");
   const [attachments, setAttachments] = useState([]);
+  const [location, setLocation] = useState("");
   const [errors, setErrors] = useState({}); // Stores errors
 
   // Get current date and time
@@ -117,54 +121,115 @@ const ApplicationForm = ({ navigation, route }) => {
     if (!desc.trim()) newErrors.desc = "Description is required.";
     if (category === "Select")
       newErrors.category = "Please select a valid category.";
-
+    if (!location.trim()) newErrors.location = "Location is Required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const getCurrentLocation = async () => {
+    try {
+      setLocationLoading(true); // Show loader while fetching location
+
+      // Request permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Denied", "Allow location access to continue.");
+        setLocationLoading(false);
+        return;
+      }
+
+      // Get current position (latitude & longitude)
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      // Reverse geocode to get a human-readable address
+      let addressResponse = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      if (addressResponse.length > 0) {
+        let address = addressResponse[0];
+        let formattedAddress = `${address.name || ""} ${
+          address.street || ""
+        }, ${address.city || ""}, ${address.region || ""} - ${
+          address.postalCode || ""
+        }`;
+
+        // Update state with the formatted address
+        setLocation(formattedAddress.trim());
+      } else {
+        setLocation("Unknown Address");
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+      Alert.alert("Error", "Failed to fetch location.");
+    } finally {
+      setLocationLoading(false); // Stop loading state after process
+    }
   };
 
   // Function to handle form submission
   const handleSubmit = async () => {
     if (!validateForm()) return;
-  
+
     try {
       setLoading(true);
-      
+
       // Function to upload a single attachment to Cloudinary
       const uploadToCloudinary = async (fileUri) => {
         const data = new FormData();
-        data.append("file", { uri: fileUri, type: "image/jpeg", name: "upload.jpg" });
+        data.append("file", {
+          uri: fileUri,
+          type: "image/jpeg",
+          name: "upload.jpg",
+        });
         data.append("upload_preset", "Application_Attachments"); // Replace with your Cloudinary upload preset
         data.append("cloud_name", "dja1myfkv"); // Replace with your Cloudinary cloud name
-  
-        const response = await fetch("https://api.cloudinary.com/v1_1/dja1myfkv/image/upload", {
-          method: "POST",
-          body: data,
-        });
-        
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dja1myfkv/image/upload",
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+
         const result = await response.json();
         return result.secure_url; // Return uploaded file URL
       };
-  
+
       // Upload all attachments to Cloudinary
       const uploadedAttachments = await Promise.all(
         attachments.map((fileUri) => uploadToCloudinary(fileUri))
       );
-  
+
       const newApplication = {
-        applicationID:currentDate+currentTime+[...Array(6)].map(() => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[Math.random() * 52 | 0]).join(''),
+        applicationID:
+          currentDate +
+          currentTime +
+          [...Array(6)]
+            .map(
+              () =>
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[
+                  (Math.random() * 52) | 0
+                ]
+            )
+            .join(""),
         title,
         desc,
         category,
+        location,
         attachments: uploadedAttachments, // Updated attachments with URLs
         sender: userInfo.userData.name || "Guest",
         date: currentDate,
         time: currentTime,
         status: "submitted",
       };
-      
+
       console.log(newApplication);
       await uploadApplication(newApplication, userInfo.community);
-  
+
       setLoading(false);
       Alert.alert("Success", "Application submitted successfully!", [
         { text: "OK", onPress: () => navigation.navigate("UserApplication") },
@@ -175,7 +240,6 @@ const ApplicationForm = ({ navigation, route }) => {
       Alert.alert("Error", "Failed to submit application. Please try again.");
     }
   };
-  
 
   return (
     <>
@@ -222,6 +286,33 @@ const ApplicationForm = ({ navigation, route }) => {
                 {errors.desc && (
                   <Text style={styles.errorText}>{errors.desc}</Text>
                 )}
+
+                <Text style={styles.label}>Location</Text>
+                <TextInput
+                  style={[styles.input, errors.location && styles.errorInput]}
+                  placeholder="Enter Location"
+                  value={location}
+                  onChangeText={setLocation}
+                />
+                {errors.location && (
+                  <Text style={styles.errorText}>{errors.location}</Text>
+                )}
+
+                <TouchableOpacity
+                  style={styles.attachmentBtn}
+                  onPress={getCurrentLocation}
+                >
+                  {locationLoading ? (
+                    <ActivityIndicator size="small" color="white" />
+                  ) : (
+                    <Icon name="location-outline" size={20} color="white" />
+                  )}
+                  <Text style={styles.attachmentText}>
+                    {locationLoading
+                      ? "Fetching Location"
+                      : "Get Live Location"}
+                  </Text>
+                </TouchableOpacity>
 
                 <Text style={styles.label}>Category</Text>
                 <Picker
