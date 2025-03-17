@@ -151,6 +151,7 @@ const ApplicationForm = ({ navigation, route }) => {
       );
   
       const newApplication = {
+        applicationID:currentDate+currentTime+[...Array(6)].map(() => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[Math.random() * 52 | 0]).join(''),
         title,
         desc,
         category,
